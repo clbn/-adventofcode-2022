@@ -15,6 +15,8 @@ procedure = procedure.split(/\r?\n/)
   .map(line => [...line.match(/\d+/g)]
     .map(n => +n));
 
+// --- Part One ---
+
 const sortedStacks = JSON.parse(JSON.stringify(stacks));
 
 procedure.forEach(([n, from, to]) => {
@@ -27,3 +29,16 @@ procedure.forEach(([n, from, to]) => {
 const topCrates = sortedStacks.reduce((acc, stack) => acc + stack.pop());
 
 console.log(topCrates);
+
+// --- Part Two ---
+
+const resortedStacks = JSON.parse(JSON.stringify(stacks));
+
+procedure.forEach(([n, from, to]) => {
+  const crates = resortedStacks[from].splice(-n, n);
+  resortedStacks[to].push(...crates);
+});
+
+const topCratesAgain = resortedStacks.reduce((acc, stack) => acc + stack.pop());
+
+console.log(topCratesAgain);
