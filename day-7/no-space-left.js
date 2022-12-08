@@ -2,8 +2,8 @@ const fs = require('fs');
 const data = fs.readFileSync('input.txt', { encoding: 'utf8' });
 const lines = data.trim().split(/\r?\n/);
 
-const dirs = {};
-let wd = [''];
+const dirs = {}; // directories (full path mapped to size)
+let wd = ['']; // current working directory (path pieces)
 
 const file = size => {
   wd.forEach((_, i, wd) => {
@@ -29,6 +29,14 @@ lines.forEach(l => {
   }
 });
 
+// --- Part One ---
+
 const sizes = Object.values(dirs);
 const sumOfSmall = sizes.filter(s => s <= 100000).reduce((acc, s) => acc + s);
 console.log(sumOfSmall);
+
+// --- Part Two ---
+
+const needed = dirs[''] - 40000000;
+const bigEnough = Math.min(...sizes.filter(s => s >= needed));
+console.log(bigEnough);
