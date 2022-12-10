@@ -20,6 +20,9 @@ const yank = (head, tail) => {
 };
 
 const visited = new Set();
+
+// --- Part One ---
+
 const head = { y: 0, x: 0 };
 const tail = { y: 0, x: 0 };
 
@@ -31,6 +34,27 @@ motions.forEach(([direction, distance]) => {
     yank(head, tail);
 
     visited.add(JSON.stringify(tail));
+  }
+});
+
+console.log(visited.size);
+
+// --- Part Two ---
+
+visited.clear();
+const length = 10;
+const rope = Array(length).fill(0).map(() => ({ y: 0, x: 0 }));
+
+motions.forEach(([direction, distance]) => {
+  while (distance--) {
+    rope[0].y += step[direction].y;
+    rope[0].x += step[direction].x;
+
+    for (let i = 1; i < rope.length; i++) {
+      yank(rope[i-1], rope[i]);
+    }
+
+    visited.add(JSON.stringify(rope[rope.length-1]));
   }
 });
 
