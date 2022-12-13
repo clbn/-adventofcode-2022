@@ -29,8 +29,19 @@ const compare = (a, b) => {
   return 0;
 };
 
+// --- Part One ---
+
 const goodOnes = pairs
   .map(([a, b]) => compare(a, b) < 1)
   .reduce((acc, v, i) => v ? acc + i + 1 : acc, 0);
 
 console.log(goodOnes);
+
+// --- Part Two ---
+
+pairs.push([[[2]], [[6]]]);
+const sorted = pairs.flat(1).sort(compare).map(JSON.stringify);
+const d1 = sorted.indexOf('[[2]]') + 1;
+const d2 = sorted.indexOf('[[6]]') + 1;
+
+console.log(d1 * d2);
