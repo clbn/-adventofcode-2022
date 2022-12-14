@@ -47,11 +47,15 @@ const buildWall = (paths) => {
   return wall;
 }
 
-const pourSand = (wall) => {
+const pourSand = (wall, floor = false) => {
   let amount = 0;
 
   while (true) {
     let [x, y] = [500, 0];
+
+    if (wall[y][x]) {
+      return amount; // source of sand gets blocked
+    }
 
     while (true) {
       const next = [x, x-1, x+1].find(xx => !wall[y+1][xx]);
@@ -62,6 +66,11 @@ const pourSand = (wall) => {
       }
 
       if (y > wall.bottom) {
+        if (floor) {
+          wall[y][x] = true;
+          break; // unit of sand stopped (on the floor)
+        }
+
         return amount; // sand starts flowing into the abyss
       }
 
@@ -74,6 +83,12 @@ const pourSand = (wall) => {
 
 const wall = buildWall(paths);
 
-const amount = pourSand(wall);
+// --- Part One ---
 
+let amount = pourSand(wall);
+console.log(amount);
+
+// --- Part Two ---
+
+amount += pourSand(wall, true);
 console.log(amount);
