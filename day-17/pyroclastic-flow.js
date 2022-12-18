@@ -23,7 +23,18 @@ let height = 0;
 let rounds = 0;
 let moves = 0;
 
-while (rounds < 2022) {
+// For the part 2, we look for repeating samples
+const totalRounds = 1_000_000_000_000;
+let samples = new Set();
+let knownSample;
+let cycles = { started: false, ended: false, needed: 0 }; // If first cycle started, if first cycle ended, how many cycles needed
+let rr = {}; // Rounds: pre-cycle, in-cycle and post-cycle
+let hh = {}; // Heights: pre-cycle, in-cycle and post-cycle
+
+// A sample = current rock + current move + top 10 lines of the tower (without walls, encoded into a string)
+const getSample = (ch, h, r, m) => r + '/' + m + '/' + String.fromCharCode(...ch.slice(h-10, h).map(n => (n & 0b011111110) >> 1));
+
+while (rounds < totalRounds) {
   let y = height + 3;
   let rock = [...rocks[rounds++ % rocks.length]];
 
@@ -44,6 +55,42 @@ while (rounds < 2022) {
       break;
     }
   }
+
+  if (rounds === 2022) {
+    console.log(`Height after 2022 rocks:`, height);
+  }
+
+  const sample = getSample(chamber, height, rounds % rocks.length, moves % jets.length);
+
+  if (cycles.started && cycles.ended && rounds === rr.pre + rr.in + rr.post) {
+    // Third point of interest:
+    // the remainder (after-cycle) height is calculated, now we got all we need
+    hh.post = height - hh.pre - hh.in;
+    break;
+  }
+
+  if (cycles.started && !cycles.ended && sample === knownSample) {
+    // Second point of interest:
+    // found the same sample again, the first iteration of cycle ended
+    cycles.ended = true;
+    rr.in = rounds - rr.pre;
+    hh.in = height - hh.pre;
+    cycles.needed = Math.floor((totalRounds - rr.pre) / rr.in);
+    rr.post = totalRounds - rr.pre - cycles.needed * rr.in;
+    hh.post = height;
+  }
+
+  if (!cycles.started && samples.has(sample)) {
+    // First point of interest:
+    // found a known sample, the first iteration of cycle started
+    cycles.started = true;
+    knownSample = sample;
+    rr.pre = rounds;
+    hh.pre = height;
+  }
+
+  samples.add(sample);
 }
 
-console.log(height);
+const height2 = hh.pre + hh.in * cycles.needed + hh.post;
+console.log(`Height after ${totalRounds} rocks:`, height2);
