@@ -20,6 +20,19 @@ const getSum = (numbers) => {
   return coords.reduce((acc, m) => acc + numbers[(zero + m) % numbers.length][1], 0);
 };
 
+// --- Part One ---
+
 const mixed = mix(numbers);
 const sum = getSum(mixed);
 console.log(sum);
+
+// --- Part Two ---
+
+const key = 811589153;
+let bigNumbers = numbers.map(t => [t[0], t[1] * key]);
+
+let repeat = 10;
+while (repeat--) bigNumbers = mix(bigNumbers);
+
+const bigSum = getSum(bigNumbers);
+console.log(bigSum);
