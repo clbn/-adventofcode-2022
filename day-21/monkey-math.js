@@ -25,5 +25,25 @@ const reduce = (riddle) => {
   }
 }
 
+// --- Part One ---
+
 const root = reduce(riddle);
 console.log(root);
+
+// --- Part Two ---
+
+const invert = (riddle) => {
+  const opposite = { '*': '/', '/': '*', '-': '+', '+': '-' };
+  return riddle
+    .replace(/(\w+): ([a-z]+) ([+\-*/]) (\d+)/g, (_, a, b, op, num) => `${b}: ${a} ${opposite[op]} ${num}`)
+    .replace(/(\w+): (\d+) ([+*]) ([a-z]+)/g, (_, a, num, op, b) => `${b}: ${a} ${opposite[op]} ${num}`)
+    .replace(/(\w+): (\d+) ([\-/]) ([a-z]+)/g, (_, a, num, op, b) => `${b}: ${num} ${op} ${a}`);
+};
+
+const riddle2 = riddle.replace(/humn: .+\n/, '');
+const leftover = reduce(riddle2).replace(/root: (\w+) [+\-*/] (\d+)/, '$1: $2');
+
+const invertedLeftover = invert(leftover);
+const humn = reduce(invertedLeftover);
+
+console.log(humn);
